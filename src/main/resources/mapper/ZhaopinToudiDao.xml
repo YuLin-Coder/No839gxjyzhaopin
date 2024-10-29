@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ZhaopinToudiDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.jianli_id as jianliId
+        ,a.zhaopin_id as zhaopinId
+        ,a.insert_time as insertTime
+        ,a.zhaopin_toudi_yesno_types as zhaopinToudiYesnoTypes
+        ,a.zhaopin_toudi_yesno_text as zhaopinToudiYesnoText
+        ,a.zhaopin_toudi_shenhe_time as zhaopinToudiShenheTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ZhaopinToudiView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+        ,jianli.yonghu_id as jianliYonghuId
+        ,jianli.jianli_uuid_number as jianliUuidNumber
+        ,jianli.jianli_name as jianliName
+        ,jianli.jianli_xingming as jianliXingming
+        ,jianli.jianli_types as jianliTypes
+        ,jianli.jianli_xinzi as jianliXinzi
+        ,jianli.jianli_xueli as jianliXueli
+        ,jianli.jianli_jingli as jianliJingli
+        ,jianli.sex_types as sexTypes
+        ,jianli.jianli_file as jianliFile
+        ,jianli.jianli_phone as jianliPhone
+        ,jianli.jianli_photo as jianliPhoto
+        ,jianli.jianli_address as jianliAddress
+        ,jianli.jiaoyu_text as jiaoyuText
+        ,jianli.shixi_text as shixiText
+        ,jianli.geren_text as gerenText
+        ,zhaopin.qiye_id as zhaopinQiyeId
+        ,zhaopin.zhaopin_name as zhaopinName
+        ,zhaopin.zhaopin_photo as zhaopinPhoto
+        ,zhaopin.zhaopin_daiyu as zhaopinDaiyu
+        ,zhaopin.zhaopin_address as zhaopinAddress
+        ,zhaopin.lianxiren_name as lianxirenName
+        ,zhaopin.zhaopin_phone as zhaopinPhone
+        ,zhaopin.zhaopin_types as zhaopinTypes
+        ,zhaopin.leixing_types as leixingTypes
+        ,zhaopin.zan_number as zanNumber
+        ,zhaopin.cai_number as caiNumber
+        ,zhaopin.zhaopin_renshu_number as zhaopinRenshuNumber
+        ,zhaopin.shangxia_types as shangxiaTypes
+        ,zhaopin.zhaopin_content as zhaopinContent
+
+        FROM zhaopin_toudi  a
+        left JOIN jianli jianli ON a.jianli_id = jianli.id
+        left JOIN zhaopin zhaopin ON a.zhaopin_id = zhaopin.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.jianliId != null and params.jianliId != ''">
+                and (
+                    a.jianli_id = #{params.jianliId}
+                )
+            </if>
+            <if test="params.zhaopinId != null and params.zhaopinId != ''">
+                and (
+                    a.zhaopin_id = #{params.zhaopinId}
+                )
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test="params.zhaopinToudiYesnoTypes != null and params.zhaopinToudiYesnoTypes != ''">
+                and a.zhaopin_toudi_yesno_types = #{params.zhaopinToudiYesnoTypes}
+            </if>
+            <if test=" params.zhaopinToudiYesnoText != '' and params.zhaopinToudiYesnoText != null and params.zhaopinToudiYesnoText != 'null' ">
+                and a.zhaopin_toudi_yesno_text like CONCAT('%',#{params.zhaopinToudiYesnoText},'%')
+            </if>
+            <if test=" params.zhaopinToudiShenheTimeStart != '' and params.zhaopinToudiShenheTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.zhaopin_toudi_shenhe_time) >= UNIX_TIMESTAMP(#{params.zhaopinToudiShenheTimeStart}) ]]>
+            </if>
+            <if test=" params.zhaopinToudiShenheTimeEnd != '' and params.zhaopinToudiShenheTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.zhaopin_toudi_shenhe_time) <= UNIX_TIMESTAMP(#{params.zhaopinToudiShenheTimeEnd}) ]]>
+            </if>
+
+                <!-- 判断简历的id不为空 -->
+            <if test=" params.jianliIdNotNull != '' and params.jianliIdNotNull != null and params.jianliIdNotNull != 'null' ">
+                and a.jianli_id IS NOT NULL
+            </if>
+            <if test="params.yonghuId != null  and params.yonghuId != ''">
+                and jianli.yonghu_id = #{params.yonghuId}
+            </if>
+            <if test=" params.jianliUuidNumber != '' and params.jianliUuidNumber != null and params.jianliUuidNumber != 'null' ">
+                and jianli.jianli_uuid_number like CONCAT('%',#{params.jianliUuidNumber},'%')
+            </if>
+            <if test=" params.jianliName != '' and params.jianliName != null and params.jianliName != 'null' ">
+                and jianli.jianli_name like CONCAT('%',#{params.jianliName},'%')
+            </if>
+            <if test=" params.jianliXingming != '' and params.jianliXingming != null and params.jianliXingming != 'null' ">
+                and jianli.jianli_xingming like CONCAT('%',#{params.jianliXingming},'%')
+            </if>
+            <if test="params.jianliTypes != null  and params.jianliTypes != ''">
+                and jianli.jianli_types = #{params.jianliTypes}
+            </if>
+
+            <if test=" params.jianliXinzi != '' and params.jianliXinzi != null and params.jianliXinzi != 'null' ">
+                and jianli.jianli_xinzi like CONCAT('%',#{params.jianliXinzi},'%')
+            </if>
+            <if test=" params.jianliXueli != '' and params.jianliXueli != null and params.jianliXueli != 'null' ">
+                and jianli.jianli_xueli like CONCAT('%',#{params.jianliXueli},'%')
+            </if>
+            <if test=" params.jianliJingli != '' and params.jianliJingli != null and params.jianliJingli != 'null' ">
+                and jianli.jianli_jingli like CONCAT('%',#{params.jianliJingli},'%')
+            </if>
+            <if test="params.sexTypes != null  and params.sexTypes != ''">
+                and jianli.sex_types = #{params.sexTypes}
+            </if>
+
+            <if test=" params.jianliPhone != '' and params.jianliPhone != null and params.jianliPhone != 'null' ">
+                and jianli.jianli_phone like CONCAT('%',#{params.jianliPhone},'%')
+            </if>
+            <if test=" params.jianliAddress != '' and params.jianliAddress != null and params.jianliAddress != 'null' ">
+                and jianli.jianli_address like CONCAT('%',#{params.jianliAddress},'%')
+            </if>
+            <if test=" params.jiaoyuText != '' and params.jiaoyuText != null and params.jiaoyuText != 'null' ">
+                and jianli.jiaoyu_text like CONCAT('%',#{params.jiaoyuText},'%')
+            </if>
+            <if test=" params.shixiText != '' and params.shixiText != null and params.shixiText != 'null' ">
+                and jianli.shixi_text like CONCAT('%',#{params.shixiText},'%')
+            </if>
+            <if test=" params.gerenText != '' and params.gerenText != null and params.gerenText != 'null' ">
+                and jianli.geren_text like CONCAT('%',#{params.gerenText},'%')
+            </if>
+                <!-- 判断职位招聘的id不为空 -->
+            <if test=" params.zhaopinIdNotNull != '' and params.zhaopinIdNotNull != null and params.zhaopinIdNotNull != 'null' ">
+                and a.zhaopin_id IS NOT NULL
+            </if>
+            <if test="params.qiyeId != null  and params.qiyeId != ''">
+                and zhaopin.qiye_id = #{params.qiyeId}
+            </if>
+            <if test=" params.zhaopinName != '' and params.zhaopinName != null and params.zhaopinName != 'null' ">
+                and zhaopin.zhaopin_name like CONCAT('%',#{params.zhaopinName},'%')
+            </if>
+            <if test=" params.zhaopinDaiyu != '' and params.zhaopinDaiyu != null and params.zhaopinDaiyu != 'null' ">
+                and zhaopin.zhaopin_daiyu like CONCAT('%',#{params.zhaopinDaiyu},'%')
+            </if>
+            <if test=" params.zhaopinAddress != '' and params.zhaopinAddress != null and params.zhaopinAddress != 'null' ">
+                and zhaopin.zhaopin_address like CONCAT('%',#{params.zhaopinAddress},'%')
+            </if>
+            <if test=" params.lianxirenName != '' and params.lianxirenName != null and params.lianxirenName != 'null' ">
+                and zhaopin.lianxiren_name like CONCAT('%',#{params.lianxirenName},'%')
+            </if>
+            <if test=" params.zhaopinPhone != '' and params.zhaopinPhone != null and params.zhaopinPhone != 'null' ">
+                and zhaopin.zhaopin_phone like CONCAT('%',#{params.zhaopinPhone},'%')
+            </if>
+            <if test="params.zhaopinTypes != null  and params.zhaopinTypes != ''">
+                and zhaopin.zhaopin_types = #{params.zhaopinTypes}
+            </if>
+
+            <if test="params.leixingTypes != null  and params.leixingTypes != ''">
+                and zhaopin.leixing_types = #{params.leixingTypes}
+            </if>
+
+            <if test="params.zanNumberStart != null  and params.zanNumberStart != '' ">
+                <![CDATA[  and zhaopin.zan_number >= #{params.zanNumberStart}   ]]>
+            </if>
+            <if test="params.zanNumberEnd != null  and params.zanNumberEnd != '' ">
+                <![CDATA[  and zhaopin.zan_number <= #{params.zanNumberEnd}   ]]>
+            </if>
+            <if test="params.zanNumber != null  and params.zanNumber != '' ">
+                and zhaopin.zan_number = #{params.zanNumber}
+            </if>
+            <if test="params.caiNumberStart != null  and params.caiNumberStart != '' ">
+                <![CDATA[  and zhaopin.cai_number >= #{params.caiNumberStart}   ]]>
+            </if>
+            <if test="params.caiNumberEnd != null  and params.caiNumberEnd != '' ">
+                <![CDATA[  and zhaopin.cai_number <= #{params.caiNumberEnd}   ]]>
+            </if>
+            <if test="params.caiNumber != null  and params.caiNumber != '' ">
+                and zhaopin.cai_number = #{params.caiNumber}
+            </if>
+            <if test="params.zhaopinRenshuNumberStart != null  and params.zhaopinRenshuNumberStart != '' ">
+                <![CDATA[  and zhaopin.zhaopin_renshu_number >= #{params.zhaopinRenshuNumberStart}   ]]>
+            </if>
+            <if test="params.zhaopinRenshuNumberEnd != null  and params.zhaopinRenshuNumberEnd != '' ">
+                <![CDATA[  and zhaopin.zhaopin_renshu_number <= #{params.zhaopinRenshuNumberEnd}   ]]>
+            </if>
+            <if test="params.zhaopinRenshuNumber != null  and params.zhaopinRenshuNumber != '' ">
+                and zhaopin.zhaopin_renshu_number = #{params.zhaopinRenshuNumber}
+            </if>
+            <if test="params.shangxiaTypes != null  and params.shangxiaTypes != ''">
+                and zhaopin.shangxia_types = #{params.shangxiaTypes}
+            </if>
+
+            <if test=" params.zhaopinContent != '' and params.zhaopinContent != null and params.zhaopinContent != 'null' ">
+                and zhaopin.zhaopin_content like CONCAT('%',#{params.zhaopinContent},'%')
+            </if>
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>

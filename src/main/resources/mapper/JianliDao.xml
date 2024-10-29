@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.JianliDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.yonghu_id as yonghuId
+        ,a.jianli_uuid_number as jianliUuidNumber
+        ,a.jianli_name as jianliName
+        ,a.jianli_xingming as jianliXingming
+        ,a.jianli_types as jianliTypes
+        ,a.jianli_xinzi as jianliXinzi
+        ,a.jianli_xueli as jianliXueli
+        ,a.jianli_jingli as jianliJingli
+        ,a.sex_types as sexTypes
+        ,a.jianli_file as jianliFile
+        ,a.jianli_phone as jianliPhone
+        ,a.jianli_photo as jianliPhoto
+        ,a.jianli_address as jianliAddress
+        ,a.jiaoyu_text as jiaoyuText
+        ,a.shixi_text as shixiText
+        ,a.geren_text as gerenText
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.JianliView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.yonghu_photo as yonghuPhoto
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_email as yonghuEmail
+        ,yonghu.yonghu_delete as yonghuDelete
+
+        FROM jianli  a
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.yonghuId != null and params.yonghuId != ''">
+                and (
+                    a.yonghu_id = #{params.yonghuId}
+                )
+            </if>
+            <if test=" params.jianliUuidNumber != '' and params.jianliUuidNumber != null and params.jianliUuidNumber != 'null' ">
+                and a.jianli_uuid_number like CONCAT('%',#{params.jianliUuidNumber},'%')
+            </if>
+            <if test=" params.jianliName != '' and params.jianliName != null and params.jianliName != 'null' ">
+                and a.jianli_name like CONCAT('%',#{params.jianliName},'%')
+            </if>
+            <if test=" params.jianliXingming != '' and params.jianliXingming != null and params.jianliXingming != 'null' ">
+                and a.jianli_xingming like CONCAT('%',#{params.jianliXingming},'%')
+            </if>
+            <if test="params.jianliTypes != null and params.jianliTypes != ''">
+                and a.jianli_types = #{params.jianliTypes}
+            </if>
+            <if test=" params.jianliXinzi != '' and params.jianliXinzi != null and params.jianliXinzi != 'null' ">
+                and a.jianli_xinzi like CONCAT('%',#{params.jianliXinzi},'%')
+            </if>
+            <if test=" params.jianliXueli != '' and params.jianliXueli != null and params.jianliXueli != 'null' ">
+                and a.jianli_xueli like CONCAT('%',#{params.jianliXueli},'%')
+            </if>
+            <if test=" params.jianliJingli != '' and params.jianliJingli != null and params.jianliJingli != 'null' ">
+                and a.jianli_jingli like CONCAT('%',#{params.jianliJingli},'%')
+            </if>
+            <if test="params.sexTypes != null and params.sexTypes != ''">
+                and a.sex_types = #{params.sexTypes}
+            </if>
+            <if test=" params.jianliPhone != '' and params.jianliPhone != null and params.jianliPhone != 'null' ">
+                and a.jianli_phone like CONCAT('%',#{params.jianliPhone},'%')
+            </if>
+            <if test=" params.jianliAddress != '' and params.jianliAddress != null and params.jianliAddress != 'null' ">
+                and a.jianli_address like CONCAT('%',#{params.jianliAddress},'%')
+            </if>
+            <if test=" params.jiaoyuText != '' and params.jiaoyuText != null and params.jiaoyuText != 'null' ">
+                and a.jiaoyu_text like CONCAT('%',#{params.jiaoyuText},'%')
+            </if>
+            <if test=" params.shixiText != '' and params.shixiText != null and params.shixiText != 'null' ">
+                and a.shixi_text like CONCAT('%',#{params.shixiText},'%')
+            </if>
+            <if test=" params.gerenText != '' and params.gerenText != null and params.gerenText != 'null' ">
+                and a.geren_text like CONCAT('%',#{params.gerenText},'%')
+            </if>
+
+                <!-- 判断用户的id不为空 -->
+            <if test=" params.yonghuIdNotNull != '' and params.yonghuIdNotNull != null and params.yonghuIdNotNull != 'null' ">
+                and a.yonghu_id IS NOT NULL
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuEmail != '' and params.yonghuEmail != null and params.yonghuEmail != 'null' ">
+                and yonghu.yonghu_email like CONCAT('%',#{params.yonghuEmail},'%')
+            </if>
+            <if test="params.yonghuDeleteStart != null  and params.yonghuDeleteStart != '' ">
+                <![CDATA[  and yonghu.yonghu_delete >= #{params.yonghuDeleteStart}   ]]>
+            </if>
+            <if test="params.yonghuDeleteEnd != null  and params.yonghuDeleteEnd != '' ">
+                <![CDATA[  and yonghu.yonghu_delete <= #{params.yonghuDeleteEnd}   ]]>
+            </if>
+            <if test="params.yonghuDelete != null  and params.yonghuDelete != '' ">
+                and yonghu.yonghu_delete = #{params.yonghuDelete}
+            </if>
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>

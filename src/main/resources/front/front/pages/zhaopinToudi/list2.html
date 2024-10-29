@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <title>简历投递</title>
+    <meta name="keywords" content=""/>
+    <meta name="description" content=""/>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="../../layui/css/layui.css">
+    <link rel="stylesheet" href="../../xznstatic/css/common.css"/>
+    <link rel="stylesheet" href="../../xznstatic/css/style.css"/>
+    <script type="text/javascript" src="../../xznstatic/js/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../../xznstatic/js/jquery.SuperSlide.2.1.1.js"></script>
+    <link rel="stylesheet" href="../../xznstatic/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../css/theme.css"/>
+</head>
+<style>
+    .center-container {
+        width: 1200px;
+        margin: 0 auto;
+        margin-top: 20px;
+        display: flex;
+        margin-bottom: 20px;
+    }
+.prolist .left_nav {
+        background: #fff;
+        width: 220px;
+    }
+    .prolist .left_nav .dlx1 {
+        padding: 15px 0;
+        padding-left: 20px;
+        background: var(--publicMainColor);
+        color: #fff;
+    }
+    .prolist .left_nav .dlx1 dt {
+        font-size: 22px;
+        font-weight: bold;
+    }
+    .prolist .left_nav .dlx1 dd {
+        padding-top: 5px;
+        font-size: 14px;
+        font-weight: 200;
+    }
+    .prolist .left_nav .dlx2 {
+        padding: 15px 0;
+        padding-left: 20px;
+        background: var(--publicMainColor);
+        color: #fff;
+    }
+    .prolist .left_nav .dlx2 dt {
+        font-size: 14px;
+    }
+    .prolist .left_nav .dlx2 dd {
+        padding-top: 5px;
+        font-size: 22px;
+        color:  var(--publicSubColor);
+        font-family: impact;
+    }
+    .prolist .left_nav ul {
+        padding: 20px;
+    }
+    .prolist .left_nav ul li {
+        display: block;
+        margin-bottom: 15px;
+    }
+    .prolist .left_nav ul li:last-child {
+        margin-bottom: 0;
+    }
+    .prolist .left_nav ul li {
+        background-color: var(--publicSubColor);
+        display: block;
+        border: 1px solid #ddd;
+        padding: 15px 10px;
+        color: #666;
+        font-size: 12px;
+    }
+    .prolist .left_nav ul li i {
+        color:  var(--publicMainColor);
+        margin-right: 10px;
+    }
+    .prolist .left_nav ul li:hover {
+        border: 1px solid var(--publicMainColor);
+        background: var(--publicMainColor);
+        color: #fff;
+    }
+    .prolist .left_nav ul li:hover i {
+        color: var(--publicSubColor);
+    }
+    .onclickbiaoqian{
+        color: #fff !important;
+        background-color: var(--publicMainColor) !important;
+    }
+    .onclickbiaoqian i{
+        color:  var(--publicSubColor) !important;
+    }</style>
+<body class='bodyClass'>
+<div id="app">
+    <el-dialog title="弹出内容" :visible.sync="showContentModal" :modal-append-to-body="false">
+        <div class="content" style="word-break: break-all;" v-html="showContent">
+        </div>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="showContentModal = false">关 闭</el-button>
+        </div>
+    </el-dialog>
+<!-- 标题 -->
+
+
+    <!-- 标题 -->
+    <div class="center-container">
+        <!-- 个人中心菜单 config.js-->
+<div class="prolist">
+    <div class="left_nav">
+        <dl class="dlx1">
+            <dt>简历投递</dt>
+            <dd>USER / CENTER</dd>
+        </dl>
+        <ul>
+            <li  v-for="(item,index) in centerMenu" v-bind:key="index" @click="jump(item.url)"
+                 :class="item.url=='../zhaopinToudi/list.html'?'onclickbiaoqian':''"><i class="layui-icon">&#xe6b1;</i>{{item.name}}</li>
+        </ul>
+    </div>
+</div>        <!-- 个人中心菜单 -->
+        <div class="right-container sub_borderColor" style="overflow: auto" :style='{"padding":"20px","boxShadow":"0px rgba(255,0,0,.8)","margin":"0","backgroundColor":"#fff","borderRadius":"0","borderWidth":"1px","borderStyle":"solid","width":"80%"}'>
+            <div style="display: flex;height: 60px;align-items: center;margin-left: 15px;justify-content: space-between">
+<!--                <button @click="jump('../zhaopinToudi/add.html')" class="layui-btn layui-btn-lg btn-theme sub_backgroundColor" :style='{"padding":"0 15px","boxShadow":"0 0 8px rgba(0,0,0,0)","margin":"0 0 0 10px","borderColor":"#409EFF","color":"#333","borderRadius":"4px","borderWidth":"0","width":"auto","fontSize":"14px","borderStyle":"solid","height":"40px"}'>
+                    <i v-if="true" class="layui-icon">&#xe654;</i> 添加简历投递信息
+                </button>-->
+            </div>
+            <table class="layui-table" lay-skin="nob">
+                <thead>
+                    <tr>
+                    <!-- 级联表 -->
+                        <th>简历标题</th>
+                        <th>求职意向</th>
+                        <th>照片</th>
+                        <th>招聘信息名称</th>
+                        <th>招聘岗位</th>
+                        <th>招聘信息照片</th>
+                        <!-- 当前表 -->
+                        <th>投递时间</th>
+                        <th>审核状态</th>
+                        <th>投递回复</th>
+                        <th>回复时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item,index) in dataList" v-bind:key="index">
+        <!-- 级联表 -->
+                        <td>{{item.jianliName}}</td>
+                        <td>{{item.jianliValue}}</td>
+                        <td>
+                            <img v-if="item.jianliPhoto" :src="baseUrl+item.jianliPhoto" style="width: 100px;height: 100px;object-fit: cover;">
+                            <span v-else >暂无照片</span>
+                        </td>
+                        <td>{{item.zhaopinName}}</td>
+                        <td>{{item.zhaopinValue}}</td>
+                        <td>
+                            <img v-if="item.zhaopinPhoto" :src="baseUrl+item.zhaopinPhoto" style="width: 100px;height: 100px;object-fit: cover;">
+                            <span v-else >暂无照片</span>
+                        </td>
+                        <td>{{item.insertTime}}</td>
+                        <td>{{item.zhaopinToudiYesnoValue}}</td>
+                        <td><button v-if="item.zhaopinToudiYesnoText!=null&&item.zhaopinToudiYesnoText!=''" @click="showContentFunction(item.zhaopinToudiYesnoText)" type="button" class="layui-btn layui-btn-success">点击查看</button></td>
+                        <td>{{item.zhaopinToudiShenheTime}}</td>
+                        <td style="width: 100px;">
+                        <!--
+                            <button @click="jump('../zhaopinToudi/add.html?zhaopinToudiId='+item.id)" type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-warm">
+                                 修改
+                            </button>
+                        -->
+                            <button @click="deleteData(item)" type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-warm">
+                                <i class="layui-icon">&#xe640;</i> 删除
+                            </button>
+                            <button v-if="item.zhaopinToudiTypes==1 && false" @click="wuyong(item.id)" type="button" class="layui-btn layui-btn-sm layui-btn-radius layui-btn-warm">
+                                无用按钮
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="pager" id="pager" :style="{textAlign:'center'}"></div>
+        </div>
+    </div></div>
+
+<script src="../../xznstatic/js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../xznstatic/js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../layui/layui.js"></script>
+<script src="../../js/vue.js"></script>
+<!-- 引入element组件库 -->
+<script src="../../xznstatic/js/element.min.js"></script>
+<!-- 引入element样式 -->
+<link rel="stylesheet" href="../../xznstatic/css/element.min.css">
+<script src="../../js/config.js"></script>
+<script src="../../modules/config.js"></script>
+<script src="../../js/utils.js"></script>
+
+<script type="text/javascript">
+    Vue.prototype.myFilters = function (msg) {
+        if(msg==null || msg==""){
+            return "";
+        }else if (msg.length>20){
+            msg.replace(/\n/g, "<br>");
+            return msg.substring(0,30)+"......";
+        }else{
+            return msg.replace(/\n/g, "<br>");
+        }
+    };
+    var vue = new Vue({
+        el: '#app',
+        data: {
+            userId: localStorage.getItem("userid"),//当前登录人的id
+            sessionTable: localStorage.getItem("userTable"),//登录账户所在表名
+            role: localStorage.getItem("role"),//权限
+            //小菜单
+            centerMenu: centerMenu,
+            //项目路径
+            baseUrl:"",
+            //弹出内容模态框
+            showContentModal:false,
+            showContent:"",
+            zhaopinToudiYesnoTypesList: [],
+
+            //查询条件
+            searchForm: {
+                page: 1
+                ,limit: 8
+                ,sort: "id"//字段
+                ,order: "desc"//asc desc
+                ,yonghuId: localStorage.getItem('userid')//只能查询自己
+                    ,zhaopinToudiYesnoText: ""
+            },
+
+            dataList: [],
+        },
+        filters: {
+            subString: function(val) {
+                if (val) {
+                    val = val.replace(/<[^<>]+>/g, '').replace(/undefined/g, '');
+                    if (val.length > 60) {
+                        val = val.substring(0, 60);
+                        val+='...';
+                    }
+                    return val;
+                }
+                return '';
+            }
+        },
+        computed: {
+        },
+        methods: {
+            isAuth(tablename, button) {
+                return isFrontAuth(tablename, button);
+            },
+            jump(url) {
+                jump(url);
+            },
+            jumpCheck(url,check1,check2) {
+                if(check1 == "2" || check1 == 2){//级联表的逻辑删除字段[1:未删除 2:已删除]
+                    layui.layer.msg("已经被删除", {
+                        time: 2000,
+                        icon: 2
+                    });
+                    return false;
+                }
+                if(check2 == "2"  || check2 == 2){//是否下架[1:上架 2:下架]
+                    layui.layer.msg("已经下架", {
+                        time: 2000,
+                        icon: 2
+                    });
+                    return false;
+                }
+                this.jump(url);
+            },
+            showContentFunction(content) {
+                this.showContentModal=true;
+                this.showContent=content.replaceAll("src=\"upload/","src=\""+this.baseUrl+"upload/");
+            },
+            wuyong(id) {
+                var mymessage = confirm("确定要    吗？");if(!mymessage){return false;}
+                layui.http.requestJson(`zhaopinToudi/update`, 'post', {
+                    id:id,
+//                    zhaopinToudiTypes:1,
+                }, function (res) {
+                    if(res.code == 0){
+                        layui.layer.msg('操作成功', {time: 2000, icon: 6 }, function () {window.location.reload();});
+                    }else{
+                        layui.layer.msg(res.msg, {time: 5000,icon: 5});
+                    }
+                });
+            },
+            deleteData(data){
+                var mymessage = confirm("确定要删除这条数据吗？");
+                if(!mymessage){
+                    return false;
+                }
+                // 删除信息
+                layui.http.requestJson(`zhaopinToudi/delete`, 'post', [data.id], (res) => {
+                    if(res.code==0){
+                        layer.msg('删除成功', {
+                            time: 2000,
+                            icon: 6
+                        });
+                        window.location.reload();
+                    }else{
+                        layer.msg(res.msg, {
+                            time: 2000,
+                            icon: 2
+                        });
+                    }
+                });
+            },
+
+        }
+    });
+
+    layui.use(['layer', 'element', 'carousel', 'laypage', 'http', 'jquery', 'laydate', 'tinymce'], function() {
+        var layer = layui.layer;
+        var element = layui.element;
+        var carousel = layui.carousel;
+        var laypage = layui.laypage;
+        var http = layui.http;
+        var laydate = layui.laydate;
+        var tinymce = layui.tinymce;
+        window.jQuery = window.$ = jquery = layui.jquery;
+        vue.baseUrl = http.baseurl
+
+        localStorage.setItem("goUtl","./pages/zhaopinToudi/list2.html")
+
+        // var id = http.getParam('id');
+
+
+            //当前表的 审核状态 字段 字典表查询
+            zhaopinToudiYesnoTypesSelect();
+           //当前表的 审核状态 字段 字典表查询方法
+           function zhaopinToudiYesnoTypesSelect() {
+               http.request("dictionary/page?page=1&limit=100&sort=&order=&dicCode=zhaopin_toudi_yesno_types", 'get', {}, function (res) {
+                   if(res.code == 0){
+                       vue.zhaopinToudiYesnoTypesList = res.data.list;
+                   }
+               });
+           }
+            // 分页列表
+            pageList();
+
+            // 搜索按钮
+            jquery('#btn-search').click(function (e) {
+                pageList();
+            });
+
+            function pageList() {
+                // 获取列表数据
+                http.request('zhaopinToudi/list', 'get', vue.searchForm, function (res) {
+                    vue.dataList = res.data.list;
+                    // 分页
+                    laypage.render({
+                        elem: 'pager',
+                        count: res.data.total,
+                        limit: vue.searchForm.limit,
+                        groups: 3,
+                        layout: ["prev", "page", "next"],
+                        jump: function (obj, first) {
+                            vue.searchForm.page = obj.curr;//翻页
+                            //首次不执行
+                            if (!first) {
+                                http.request('zhaopinToudi/list', 'get', vue.searchForm, function (res1) {
+                                    vue.dataList = res1.data.list;
+                                })
+                            }
+                        }
+                    });
+                });
+            }
+    });
+
+    window.xznSlide = function () {
+        jQuery(".banner").slide({mainCell: ".bd ul", autoPlay: true, interTime: 5000});
+        jQuery("#ifocus").slide({
+            titCell: "#ifocus_btn li",
+            mainCell: "#ifocus_piclist ul",
+            effect: "leftLoop",
+            delayTime: 200,
+            autoPlay: true,
+            triggerTime: 0
+        });
+        jQuery("#ifocus").slide({titCell: "#ifocus_btn li", mainCell: "#ifocus_tx ul", delayTime: 0, autoPlay: true});
+        jQuery(".product_list").slide({
+            mainCell: ".bd ul",
+            autoPage: true,
+            effect: "leftLoop",
+            autoPlay: true,
+            vis: 5,
+            trigger: "click",
+            interTime: 4000
+        });
+    };
+</script>
+</body>
+</html>

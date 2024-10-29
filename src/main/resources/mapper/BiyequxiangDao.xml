@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.BiyequxiangDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.yonghu_id as yonghuId
+        ,a.biyequxiang_uuid_number as biyequxiangUuidNumber
+        ,a.biyequxiang_types as biyequxiangTypes
+        ,a.biyequxiang_file as biyequxiangFile
+        ,a.gongsi_name as gongsiName
+        ,a.gongsi_address as gongsiAddress
+        ,a.biyequxiang_xinzi as biyequxiangXinzi
+        ,a.biyequxiang_time as biyequxiangTime
+        ,a.biyequxiang_content as biyequxiangContent
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.BiyequxiangView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.yonghu_photo as yonghuPhoto
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_email as yonghuEmail
+        ,yonghu.yonghu_delete as yonghuDelete
+
+        FROM biyequxiang  a
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.yonghuId != null and params.yonghuId != ''">
+                and (
+                    a.yonghu_id = #{params.yonghuId}
+                )
+            </if>
+            <if test=" params.biyequxiangUuidNumber != '' and params.biyequxiangUuidNumber != null and params.biyequxiangUuidNumber != 'null' ">
+                and a.biyequxiang_uuid_number like CONCAT('%',#{params.biyequxiangUuidNumber},'%')
+            </if>
+            <if test="params.biyequxiangTypes != null and params.biyequxiangTypes != ''">
+                and a.biyequxiang_types = #{params.biyequxiangTypes}
+            </if>
+            <if test=" params.gongsiName != '' and params.gongsiName != null and params.gongsiName != 'null' ">
+                and a.gongsi_name like CONCAT('%',#{params.gongsiName},'%')
+            </if>
+            <if test=" params.gongsiAddress != '' and params.gongsiAddress != null and params.gongsiAddress != 'null' ">
+                and a.gongsi_address like CONCAT('%',#{params.gongsiAddress},'%')
+            </if>
+            <if test="params.biyequxiangXinziStart != null and params.biyequxiangXinziStart != ''">
+                <![CDATA[  and a.biyequxiang_xinzi >= #{params.biyequxiangXinziStart}   ]]>
+            </if>
+            <if test="params.biyequxiangXinziEnd != null and params.biyequxiangXinziEnd != ''">
+                <![CDATA[  and a.biyequxiang_xinzi <= #{params.biyequxiangXinziEnd}   ]]>
+            </if>
+             <if test="params.biyequxiangXinzi != null and params.biyequxiangXinzi != ''">
+                and a.biyequxiang_xinzi = #{params.biyequxiangXinzi}
+             </if>
+            <if test=" params.biyequxiangTimeStart != '' and params.biyequxiangTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.biyequxiang_time) >= UNIX_TIMESTAMP(#{params.biyequxiangTimeStart}) ]]>
+            </if>
+            <if test=" params.biyequxiangTimeEnd != '' and params.biyequxiangTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.biyequxiang_time) <= UNIX_TIMESTAMP(#{params.biyequxiangTimeEnd}) ]]>
+            </if>
+            <if test=" params.biyequxiangContent != '' and params.biyequxiangContent != null and params.biyequxiangContent != 'null' ">
+                and a.biyequxiang_content like CONCAT('%',#{params.biyequxiangContent},'%')
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+                <!-- 判断用户的id不为空 -->
+            <if test=" params.yonghuIdNotNull != '' and params.yonghuIdNotNull != null and params.yonghuIdNotNull != 'null' ">
+                and a.yonghu_id IS NOT NULL
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuEmail != '' and params.yonghuEmail != null and params.yonghuEmail != 'null' ">
+                and yonghu.yonghu_email like CONCAT('%',#{params.yonghuEmail},'%')
+            </if>
+            <if test="params.yonghuDeleteStart != null  and params.yonghuDeleteStart != '' ">
+                <![CDATA[  and yonghu.yonghu_delete >= #{params.yonghuDeleteStart}   ]]>
+            </if>
+            <if test="params.yonghuDeleteEnd != null  and params.yonghuDeleteEnd != '' ">
+                <![CDATA[  and yonghu.yonghu_delete <= #{params.yonghuDeleteEnd}   ]]>
+            </if>
+            <if test="params.yonghuDelete != null  and params.yonghuDelete != '' ">
+                and yonghu.yonghu_delete = #{params.yonghuDelete}
+            </if>
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ZhaopinDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.qiye_id as qiyeId
+        ,a.zhaopin_name as zhaopinName
+        ,a.zhaopin_photo as zhaopinPhoto
+        ,a.zhaopin_daiyu as zhaopinDaiyu
+        ,a.zhaopin_address as zhaopinAddress
+        ,a.lianxiren_name as lianxirenName
+        ,a.zhaopin_phone as zhaopinPhone
+        ,a.zhaopin_types as zhaopinTypes
+        ,a.leixing_types as leixingTypes
+        ,a.zan_number as zanNumber
+        ,a.cai_number as caiNumber
+        ,a.zhaopin_renshu_number as zhaopinRenshuNumber
+        ,a.shangxia_types as shangxiaTypes
+        ,a.zhaopin_content as zhaopinContent
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ZhaopinView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+        ,qiye.qiye_name as qiyeName
+        ,qiye.qiye_types as qiyeTypes
+        ,qiye.qiye_phone as qiyePhone
+        ,qiye.qiye_email as qiyeEmail
+        ,qiye.qiye_photo as qiyePhoto
+        ,qiye.qiye_chenglishijian_time as qiyeChenglishijianTime
+        ,qiye.qiye_content as qiyeContent
+        ,qiye.qiye_delete as qiyeDelete
+
+        FROM zhaopin  a
+        left JOIN qiye qiye ON a.qiye_id = qiye.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test="params.qiyeId != null and params.qiyeId != ''">
+                and (
+                    a.qiye_id = #{params.qiyeId}
+                )
+            </if>
+            <if test=" params.zhaopinName != '' and params.zhaopinName != null and params.zhaopinName != 'null' ">
+                and a.zhaopin_name like CONCAT('%',#{params.zhaopinName},'%')
+            </if>
+            <if test=" params.zhaopinDaiyu != '' and params.zhaopinDaiyu != null and params.zhaopinDaiyu != 'null' ">
+                and a.zhaopin_daiyu like CONCAT('%',#{params.zhaopinDaiyu},'%')
+            </if>
+            <if test=" params.zhaopinAddress != '' and params.zhaopinAddress != null and params.zhaopinAddress != 'null' ">
+                and a.zhaopin_address like CONCAT('%',#{params.zhaopinAddress},'%')
+            </if>
+            <if test=" params.lianxirenName != '' and params.lianxirenName != null and params.lianxirenName != 'null' ">
+                and a.lianxiren_name like CONCAT('%',#{params.lianxirenName},'%')
+            </if>
+            <if test=" params.zhaopinPhone != '' and params.zhaopinPhone != null and params.zhaopinPhone != 'null' ">
+                and a.zhaopin_phone like CONCAT('%',#{params.zhaopinPhone},'%')
+            </if>
+            <if test="params.zhaopinTypes != null and params.zhaopinTypes != ''">
+                and a.zhaopin_types = #{params.zhaopinTypes}
+            </if>
+            <if test="params.leixingTypes != null and params.leixingTypes != ''">
+                and a.leixing_types = #{params.leixingTypes}
+            </if>
+            <if test="params.zanNumberStart != null and params.zanNumberStart != ''">
+                <![CDATA[  and a.zan_number >= #{params.zanNumberStart}   ]]>
+            </if>
+            <if test="params.zanNumberEnd != null and params.zanNumberEnd != ''">
+                <![CDATA[  and a.zan_number <= #{params.zanNumberEnd}   ]]>
+            </if>
+             <if test="params.zanNumber != null and params.zanNumber != ''">
+                and a.zan_number = #{params.zanNumber}
+             </if>
+            <if test="params.caiNumberStart != null and params.caiNumberStart != ''">
+                <![CDATA[  and a.cai_number >= #{params.caiNumberStart}   ]]>
+            </if>
+            <if test="params.caiNumberEnd != null and params.caiNumberEnd != ''">
+                <![CDATA[  and a.cai_number <= #{params.caiNumberEnd}   ]]>
+            </if>
+             <if test="params.caiNumber != null and params.caiNumber != ''">
+                and a.cai_number = #{params.caiNumber}
+             </if>
+            <if test="params.zhaopinRenshuNumberStart != null and params.zhaopinRenshuNumberStart != ''">
+                <![CDATA[  and a.zhaopin_renshu_number >= #{params.zhaopinRenshuNumberStart}   ]]>
+            </if>
+            <if test="params.zhaopinRenshuNumberEnd != null and params.zhaopinRenshuNumberEnd != ''">
+                <![CDATA[  and a.zhaopin_renshu_number <= #{params.zhaopinRenshuNumberEnd}   ]]>
+            </if>
+             <if test="params.zhaopinRenshuNumber != null and params.zhaopinRenshuNumber != ''">
+                and a.zhaopin_renshu_number = #{params.zhaopinRenshuNumber}
+             </if>
+            <if test="params.shangxiaTypes != null and params.shangxiaTypes != ''">
+                and a.shangxia_types = #{params.shangxiaTypes}
+            </if>
+            <if test=" params.zhaopinContent != '' and params.zhaopinContent != null and params.zhaopinContent != 'null' ">
+                and a.zhaopin_content like CONCAT('%',#{params.zhaopinContent},'%')
+            </if>
+
+                <!-- 判断企业的id不为空 -->
+            <if test=" params.qiyeIdNotNull != '' and params.qiyeIdNotNull != null and params.qiyeIdNotNull != 'null' ">
+                and a.qiye_id IS NOT NULL
+            </if>
+            <if test=" params.qiyeName != '' and params.qiyeName != null and params.qiyeName != 'null' ">
+                and qiye.qiye_name like CONCAT('%',#{params.qiyeName},'%')
+            </if>
+            <if test="params.qiyeTypes != null  and params.qiyeTypes != ''">
+                and qiye.qiye_types = #{params.qiyeTypes}
+            </if>
+
+            <if test=" params.qiyePhone != '' and params.qiyePhone != null and params.qiyePhone != 'null' ">
+                and qiye.qiye_phone like CONCAT('%',#{params.qiyePhone},'%')
+            </if>
+            <if test=" params.qiyeEmail != '' and params.qiyeEmail != null and params.qiyeEmail != 'null' ">
+                and qiye.qiye_email like CONCAT('%',#{params.qiyeEmail},'%')
+            </if>
+            <if test=" params.qiyeChenglishijianTimeStart != '' and params.qiyeChenglishijianTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(qiye.qiye_chenglishijian_time) >= UNIX_TIMESTAMP(#{params.qiyeChenglishijianTimeStart}) ]]>
+            </if>
+            <if test=" params.qiyeChenglishijianTimeEnd != '' and params.qiyeChenglishijianTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(qiye.qiye_chenglishijian_time) <= UNIX_TIMESTAMP(#{params.qiyeChenglishijianTimeEnd}) ]]>
+            </if>
+            <if test=" params.qiyeContent != '' and params.qiyeContent != null and params.qiyeContent != 'null' ">
+                and qiye.qiye_content like CONCAT('%',#{params.qiyeContent},'%')
+            </if>
+            <if test="params.qiyeDeleteStart != null  and params.qiyeDeleteStart != '' ">
+                <![CDATA[  and qiye.qiye_delete >= #{params.qiyeDeleteStart}   ]]>
+            </if>
+            <if test="params.qiyeDeleteEnd != null  and params.qiyeDeleteEnd != '' ">
+                <![CDATA[  and qiye.qiye_delete <= #{params.qiyeDeleteEnd}   ]]>
+            </if>
+            <if test="params.qiyeDelete != null  and params.qiyeDelete != '' ">
+                and qiye.qiye_delete = #{params.qiyeDelete}
+            </if>
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>
